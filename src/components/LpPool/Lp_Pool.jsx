@@ -40,29 +40,30 @@ function Lp_Pool() {
 		dispatch(connectionAction())
 	}
 
-  const staked=async()=>{
-    console.log("enter value")
-    const web3 = window.web3;
-    let tokenStaking = new web3.eth.Contract(tokenLpStakingAbi, tokenLpStaking);
-    let staked=await tokenStaking.methods.User(acc).call();
-    console.log("staked",staked)
-    console.log("staked1",web3.utils.fromWei(staked.mystakedTokens))
-    setStaked((web3.utils.fromWei(staked.mystakedTokens)))
-  }
+  // const staked=async()=>{
+  //   console.log("enter value")
+  //   const web3 = window.web3;
+  //   let tokenStaking = new web3.eth.Contract(tokenLpStakingAbi, tokenLpStaking);
+  //   let staked=await tokenStaking.methods.User(acc).call();
+  //   console.log("staked",staked)
+  //   console.log("staked1",web3.utils.fromWei(staked.mystakedTokens))
+  //   setStaked((web3.utils.fromWei(staked.mystakedTokens)))
+  // }
 
-  const ibr=async()=>{
-    const web3 = window.web3;
-    let tokenStaking = new web3.eth.Contract(tokenLpStakingAbi, tokenLpStaking);
-    let value=await tokenStaking.methods.BBPcalculator(acc).call();
-    let newValue=Number((web3.utils.fromWei(value))).toFixed(2)
-    setIbr(newValue)
-  }
+  // const ibr=async()=>{
+  //   const web3 = window.web3;
+  //   let tokenStaking = new web3.eth.Contract(tokenLpStakingAbi, tokenLpStaking);
+  //   let value=await tokenStaking.methods.BBPcalculator(acc).call();
+  //   let newValue=Number((web3.utils.fromWei(value))).toFixed(2)
+  //   setIbr(newValue)
+  // }
 
   const balances=async()=>{
     const web3 = window.web3;
     let tokenStaking = new web3.eth.Contract(tokenLpStakingAbi, tokenLpStaking);
     let value=await tokenStaking.methods._balances(acc).call();
     let newValue=parseInt(Number((web3.utils.fromWei(value))))
+    console.log("ibbr value value",newValue)
     setIbbrValue( newValue)
   }
 
@@ -131,8 +132,8 @@ function Lp_Pool() {
 
   }
   useEffect(()=>{
-    staked()
-    ibr()
+    // staked()
+    // ibr()
     balance()
     balances()
   },[acc])

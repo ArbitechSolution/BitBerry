@@ -189,10 +189,6 @@ function PaginatedItems({ itemsPerPage }) {
     }
   };
 
-  const nftList=()=>{
-    
-  }
-
   useEffect(()=>{
     getData()
   },[acc])

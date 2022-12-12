@@ -8,6 +8,12 @@ import colorcircle1 from "../../Assets/Images/LuckyDraw/Ellipse7.png";
 import colorcircle2 from "../../Assets/Images/LuckyDraw/Ellipse8.png";
 import colorcircle3 from "../../Assets/Images/LuckyDraw/Ellipse9.png";
 import colorcircle4 from "../../Assets/Images/LuckyDraw/Ellipse10.png";
+import common from "../../Assets/nfts/common.PNG";
+import rare from "../../Assets/nfts/rare.PNG";
+import epic from "../../Assets/nfts/epic.PNG";
+import uncommon from "../../Assets/nfts/uncommon.PNG";
+import legendery from "../../Assets/nfts/legendary.PNG";
+import mythic from "../../Assets/nfts/mythic.PNG";
 import { IoClose } from "react-icons/io5";
 import { toast } from "react-toastify";
 import { HashLink } from "react-router-hash-link";
@@ -18,6 +24,7 @@ import {connectionAction} from "../../Redux/connection/actions"
 import {bbrTokenAddress,bbrtokenAbi} from "../../utils/bbr";
 import {tokenLpStaking,tokenLpStakingAbi} from "../../utils/tokenLptokenStaking";
 import {nftAddress,nftAbi} from "../../utils/nft";
+import { ThreeDots  } from 'react-loader-spinner'
 import Web3 from 'web3';
 const web3EndPoint = new Web3("https://data-seed-prebsc-1-s3.binance.org:8545/")
 function LuckyDraw() {
@@ -27,6 +34,8 @@ function LuckyDraw() {
   const [value,setValue]=useState(1)
   let [ibbrValue,setIbbrValue]=useState("0")
   let [totalCost,setTotalCost]=useState()
+  let [mintArray,setMintArray]=useState([])
+  let [loader,setLoader]=useState(false)
 
   const connectWallet = () =>{
 		dispatch(connectionAction())
@@ -40,6 +49,72 @@ function LuckyDraw() {
     setTotalCost(newValue)
     
   }
+
+  const getCurrentNfts = async () => {
+    try {
+      if (acc == "No Wallet") {
+        toast.info("Not Connected");
+      } else if (acc == "Wrong Network") {
+        toast.info("Not Connected");
+      } else if (acc == "Connect Wallet") {
+        toast.info("Not Connected");
+      } else {
+        const web3 = window.web3;
+        const nftContract = new web3.eth.Contract(
+          nftAbi,
+          nftAddress
+        );
+        let totalIds = await nftContract.methods.walletOfOwner(acc).call();
+
+        totalIds = totalIds.slice(-value);
+        // console.log("current items",totalIds)
+        let simplleArray = [];
+        totalIds.forEach(async (ids) => {
+          if (ids <= 35000) {
+            let imageUrl = common;
+            let imageName = `Common #${ids}`;
+            let tokenId = ids;
+            simplleArray = [...simplleArray, { imageUrl, imageName ,tokenId}];
+            setMintArray(simplleArray);
+          } else if (ids > 35001 && ids <= 57000) {
+            let imageUrl = uncommon;
+            let imageName = `Uncommon #${ids}`;
+            let tokenId = ids;
+            simplleArray = [...simplleArray, { imageUrl, imageName,tokenId }];
+            setMintArray(simplleArray);
+          } else if (ids > 57001 && ids <= 76000) {
+            let imageUrl = rare;
+            let imageName = `Rare #${ids}`;
+            let tokenId = ids;
+            simplleArray = [...simplleArray, { imageUrl, imageName,tokenId }];
+            setMintArray(simplleArray);
+          } else if (ids > 76001 && ids <= 90000) {
+            let imageUrl = epic;
+            let imageName = `Epic #${ids}`;
+            let tokenId = ids;
+            simplleArray = [...simplleArray, { imageUrl, imageName,tokenId }];
+            setMintArray(simplleArray);
+          } else if (ids > 90001 && ids <= 98500) {
+            let imageUrl = legendery;
+            let imageName = `Legendary #${ids}`;
+            let tokenId = ids;
+            simplleArray = [...simplleArray, { imageUrl, imageName,tokenId }];
+            setMintArray(simplleArray);
+          } else if (ids > 98501 && ids <= 100000) {
+            let imageUrl = mythic;
+            let imageName = `Mythic #${ids}`;
+            let tokenId = ids;
+            simplleArray = [...simplleArray, { imageUrl, imageName,tokenId }];
+            setMintArray(simplleArray);
+          }
+        });
+        setShow(true);
+      }
+    } catch (e) {
+      console.error("error while get current nfts", e);
+    }
+  };
+
   const handleMint =async() => {
     try{
       if (acc == "No Wallet") {
@@ -54,20 +129,23 @@ function LuckyDraw() {
           toast.info("Your balance is not enough");
         }
         else{
+          setLoader(true)
           const web3 = window.web3;
           let nftContract = new web3.eth.Contract(nftAbi,nftAddress);
           await nftContract.methods.mint(value).send({
             from:acc
           });
-          
           toast.success("successfully mint")
-          setShow(true);
+          setLoader(false)
+          getCurrentNfts();
+          // setShow(true);
         }
       }
     }
     catch(e){
       console.log("e", e);
       toast.error("Failed")
+      setLoader(false)
     }
   };
   let [animationState, setAnimationState] = useState(true);
@@ -319,17 +397,17 @@ useEffect(()=>{
                     <div className="row mt-3 d-flex justify-content-center">
                       <div className=" col-sm-6 ">
                         <div className="row d-flex justify-content-around align-items-center">
-                          <div className=" col-sm-6 d-flex align-items-center  Minusbox-1 gap-2">
-                            <div className="text-center">
-                              <i class="fa-solid fa-minus" onClick={Miuns}></i>
+                          <div className=" col-sm-6 d-flex align-items-center  Minusbox-1 gap-2" onClick={Miuns}>
+                            <div className="text-center" >
+                              <i class="fa-solid fa-minus"></i>
                             </div>
                           </div>
                           <div className="col-4  d-flex align-items-center justify-content-center Textbox">
                             <div className="text-center inputText">{value}</div>
                           </div>
-                          <div className="col-3  d-flex align-items-center Plusbox-1">
+                          <div className="col-3  d-flex align-items-center Plusbox-1" onClick={Plus}>
                             <div className="text-center">
-                              <i class="fa-solid fa-plus" onClick={Plus}></i>
+                              <i class="fa-solid fa-plus"></i>
                             </div>
                           </div>
                         </div>
@@ -369,7 +447,20 @@ useEffect(()=>{
                               handleMint();
                             }}
                           >
-                            Mint
+                            {
+                              loader?(
+                              <ThreeDots
+                              height="20"
+                              width="40"
+                              radius="9"
+                              color="black"
+                              ariaLabel="three-dots-loading"
+                              wrapperStyle={{justifyContent:"center"}}
+                              wrapperClassName=""
+                              visible={true}
+                            />
+                              ):(<>Mint</>)
+                            }
                           </button>
                         </div>
                         <div>
@@ -402,7 +493,7 @@ useEffect(()=>{
         >
           <Modal.Header closeButton></Modal.Header>
           <Modal.Body>
-            <NftTicket />
+            <NftTicket mintingArray={mintArray} />
           </Modal.Body>
         </Modal>
       )}

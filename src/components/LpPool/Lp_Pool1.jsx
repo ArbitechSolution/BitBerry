@@ -1,19 +1,11 @@
 import React, { useState, useEffect } from "react";
 import "./LpPool.css";
-import circle from "../../Assets/Images/VectorCircle-01.png";
-import sign from "../../Assets/Images/LpPool/VectorSign.png";
 import Picture1 from "../../Assets/Images/LpPool/Rectangle110.png";
-import Picture2 from "../../Assets/Images/LpPool/Rectangle11012.png";
-import Picture3 from "../../Assets/Images/LpPool/Rectangle1102.png";
-import Picture4 from "../../Assets/Images/LpPool/Rectangle1103.png";
-import Picture5 from "../../Assets/Images/LpPool/Rectangle1104.png";
-import Picture6 from "../../Assets/Images/LpPool/Rectangle1105.png";
-import Picture7 from "../../Assets/Images/LpPool/Rectangle1101.png";
-import ComingSoonButton from "../../Assets/Images/coming-soon1.png";
 import { toast } from "react-toastify";
 import { IoAlertCircle, IoClose } from "react-icons/io5";
 import { OverlayTrigger, Tooltip, Popover } from "react-bootstrap";
 import { HashLink } from "react-router-hash-link";
+import { ThreeDots  } from 'react-loader-spinner'
 import { useDispatch, useSelector } from "react-redux";
 import { connectionAction } from "../../Redux/connection/actions";
 import { bbrTokenAddress, bbrtokenAbi } from "../../utils/bbr";
@@ -31,6 +23,7 @@ function Lp_Pool1() {
   let [stake, setStaked] = useState("0");
   let [ibrValue, setIbr] = useState("0");
   let [balanc, setBalance] = useState("0");
+  let [loader,setLoader]=useState(false)
   let [redemValue, setRedemValue] = useState("0");
   let [ibbrValue,setIbbrValue] =useState()
 
@@ -41,15 +34,16 @@ function Lp_Pool1() {
   const staked = async () => {
     const web3 = window.web3;
     let tokenStaking = new web3.eth.Contract(tokenLpStakingAbi, tokenLpStaking);
-    let staked = await tokenStaking.methods.User(acc).call();
-    setStaked(parseInt(web3.utils.fromWei(staked.mystakedTokens)));
+    let staked = await tokenStaking.methods.totalBBRStaked(acc).call();
+    setStaked(Number(web3.utils.fromWei(staked )));
+
   };
 
   const ibr = async () => {
     const web3 = window.web3;
     let tokenStaking = new web3.eth.Contract(tokenLpStakingAbi, tokenLpStaking);
-    let value = await tokenStaking.methods.BBPcalculator(acc).call();
-    let newValue = Number(web3.utils.fromWei(value));
+    let value = await tokenStaking.methods.rewCalculator(acc).call();
+    let newValue = Number(web3.utils.fromWei(value)).toFixed(3);
     setIbr(newValue);
   };
 
@@ -91,16 +85,16 @@ function Lp_Pool1() {
       } else {
         const web3 = window.web3;
         let tokenStaking = new web3.eth.Contract(tokenLpStakingAbi, tokenLpStaking);
-        let value = await tokenStaking.methods.isBBRTimeCompleted(acc).call();
-        if(value==false){
-          toast.error("Unstake time not reached")
-        }
-        else{
-              await tokenStaking.methods.withdrawtoken().send({
+        // let value = await tokenStaking.methods.isBBRTimeCompleted(acc).call();
+        // if(value==false){
+        //   toast.error("Unstake time not reached")
+        // }
+        // else{
+            await tokenStaking.methods.withdrawtoken().send({
             from:acc
           });
-        }
-
+          toast.success("successfully unstake")
+      //   }
       }
   }
   catch(e){
@@ -118,6 +112,7 @@ function Lp_Pool1() {
         toast.info("Please connect wallet");
       } else {
         if (approveValue >= 500) {
+          setLoader(true)
           const web3 = window.web3;
           let tokenContract = new web3.eth.Contract(
             bbrtokenAbi,
@@ -137,8 +132,9 @@ function Lp_Pool1() {
             .send({
               from: acc,
             });
-
-          toast.success("value send");
+     
+          toast.success("successfully stacked");
+          setLoader(false)
         } else {
           toast.error("value less than 500");
         }
@@ -146,6 +142,7 @@ function Lp_Pool1() {
     } catch (e) {
       console.log("e", e);
       toast.error("Transaction failed");
+      setLoader(false)
     }
   };
 
@@ -164,6 +161,7 @@ function Lp_Pool1() {
       from:acc
     });
     console.log("redeem",value)
+    toast.success("successfully redeem");
     // let newValue = Number(web3.utils.fromWei(value)).toFixed(2);
     // console.log("newValue",newValue)
     // setIbr(newValue);
@@ -171,7 +169,7 @@ function Lp_Pool1() {
   }
   catch(e){
     console.log("e", e);
-    toast.error("Transaction failed");
+    toast.error("redeem failed");
   }
 }
 
@@ -278,13 +276,16 @@ function Lp_Pool1() {
               <div className="wallet_text">Enter {data[0].EnterBBR}</div>
               <div className="button_inside d-flex justify-content-center">
                 <input
-                  className="input_inside_button"
+                  className="input_inside_button "
                   type="text"
                   placeholder="0"
                   value={approveValue}
+                  data-bs-toggle="tooltip"
+                  data-bs-placement="top"
+                  title={`${approveValue.toString()}`}
                   onChange={(e) => setApproveValue(e.target.value)}
                 />
-
+                
                 <button className="insideButton" onClick={maxFun}>
                   Max
                 </button>
@@ -296,8 +297,20 @@ function Lp_Pool1() {
       <div className="row d-flex justify-content-center buttoun_background">
         <div className=" mt-3">
           <button className="button_bg" onClick={Approve}>
-            {" "}
-            Approve & Stake
+            {
+              loader?(
+                <ThreeDots
+                height="20"
+                width="40"
+                radius="9"
+                color="black"
+                ariaLabel="three-dots-loading"
+                wrapperStyle={{justifyContent:"center"}}
+                wrapperClassName="three-dots"
+                visible={true}
+              />
+              ):(<> Approve & Stake</>)
+            }
           </button>
         </div>
         <div className=" d-flex  flex-row justify-content-around ">

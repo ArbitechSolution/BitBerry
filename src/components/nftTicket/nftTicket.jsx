@@ -1,15 +1,14 @@
 import React, { useState, useEffect } from "react";
 import "./nftTicket.css";
 import circle from "../../Assets/Images/VectorCircle-01.png";
-import common from "../../Assets/Images/LuckyDraw/common.PNG";
-import rare from "../../Assets/Images/LuckyDraw/rare.PNG";
-import epic from "../../Assets/Images/LuckyDraw/epic.PNG";
 import { IoClose } from "react-icons/io5";
 import { HashLink } from "react-router-hash-link";
 import {useDispatch, useSelector} from "react-redux";
 import {connectionAction} from "../../Redux/connection/actions"
+import {nftAddress,nftAbi} from "../../utils/nft";
 
-function NftTicket() {
+function NftTicket({mintingArray}) {
+  console.log("mintArray",mintingArray)
   const dispatch = useDispatch();
 	let acc = useSelector((state) => state.connect?.connection);
   let [animationState, setAnimationState] = useState(true);
@@ -87,7 +86,31 @@ function NftTicket() {
             <div className="row mt-5 mb-5">
               <div className="col-12 col-lg-12 col-sm-12 ">
                 <div className="row d-flex justify-content-around ">
-                  <div className="col-xl-3 col-lg-6 col-sm-12 col-md-12 d-flex justify-content-center">
+
+                  {
+                    mintingArray && 
+                    mintingArray.map((item)=>(
+                      <div className="col-xl-3 col-lg-6 col-sm-12 col-md-12 d-flex justify-content-center">
+                    <div className="row d-flex justify-content-center">
+                      <div className="col-10 col-md-10 col-lg-10 pic-bg-nftTicket justify-content-center">
+                        <img
+                          src={item.imageUrl}
+                          className="img-fluid mt-2 rounded mobileNftTransfer"
+                          alt=""
+                        />
+                      </div>
+                      <div className="col-10 col-md-10 col-lg-10 d-flex justify-content-center mt-3">
+                        <b className="text-uppercase">{item.imageName}</b>
+                      </div>
+                      <div className="col-10 col-md-10 col-lg-10 d-flex justify-content-center ">
+                      {item.tokenId}
+                      </div>
+                    </div>
+                  </div>
+
+                    ))
+                  }
+                  {/* <div className="col-xl-3 col-lg-6 col-sm-12 col-md-12 d-flex justify-content-center">
                     <div className="row d-flex justify-content-center">
                       <div className="col-10 col-md-10 col-lg-10 pic-bg-nftTicket justify-content-center">
                         <img
@@ -138,7 +161,7 @@ function NftTicket() {
                         #1004
                       </div>
                     </div>
-                  </div>
+                  </div> */}
                 </div>
               </div>
             </div>
