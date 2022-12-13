@@ -1,6 +1,12 @@
-export const nftAddress = "0xC9cf9016B1cAF0a962E6bfBAf68d26c38F5BAEbb";
+export const nftAddress = "0x1E95680F199497878eDDFe96F69A6760f52589aE";
 export const nftAbi = [
-  { inputs: [], stateMutability: "nonpayable", type: "constructor" },
+  {
+    inputs: [
+      { internalType: "contract IBEP20", name: "_staking", type: "address" },
+    ],
+    stateMutability: "nonpayable",
+    type: "constructor",
+  },
   {
     anonymous: false,
     inputs: [
@@ -167,24 +173,14 @@ export const nftAbi = [
   {
     anonymous: false,
     inputs: [
-      { indexed: true, internalType: "address", name: "from", type: "address" },
-      { indexed: true, internalType: "bool", name: "status", type: "bool" },
-    ],
-    name: "setRevealedStatus",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      { indexed: true, internalType: "address", name: "from", type: "address" },
       {
         indexed: true,
-        internalType: "string",
-        name: "notRevealedURI",
-        type: "string",
+        internalType: "bool",
+        name: "collectionset",
+        type: "bool",
       },
     ],
-    name: "setnotRevealedURI",
+    name: "collectionSet",
     type: "event",
   },
   {
@@ -240,9 +236,26 @@ export const nftAbi = [
     type: "function",
   },
   {
+    inputs: [{ internalType: "uint256", name: "", type: "uint256" }],
+    name: "collection",
+    outputs: [
+      { internalType: "uint256", name: "collectionSupply", type: "uint256" },
+      { internalType: "uint256", name: "availableTokens", type: "uint256" },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
     inputs: [{ internalType: "uint256", name: "tokenId", type: "uint256" }],
     name: "getApproved",
     outputs: [{ internalType: "address", name: "", type: "address" }],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "getLength",
+    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
     stateMutability: "view",
     type: "function",
   },
@@ -273,13 +286,6 @@ export const nftAbi = [
   {
     inputs: [],
     name: "name",
-    outputs: [{ internalType: "string", name: "", type: "string" }],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "notRevealedUri",
     outputs: [{ internalType: "string", name: "", type: "string" }],
     stateMutability: "view",
     type: "function",
@@ -355,13 +361,6 @@ export const nftAbi = [
     type: "function",
   },
   {
-    inputs: [],
-    name: "revealed",
-    outputs: [{ internalType: "bool", name: "", type: "bool" }],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
     inputs: [
       { internalType: "address", name: "from", type: "address" },
       { internalType: "address", name: "to", type: "address" },
@@ -403,13 +402,6 @@ export const nftAbi = [
   },
   {
     inputs: [{ internalType: "uint256", name: "_amount", type: "uint256" }],
-    name: "setMaxLimitPerTransaction",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [{ internalType: "uint256", name: "_amount", type: "uint256" }],
     name: "setMaxSupply",
     outputs: [],
     stateMutability: "nonpayable",
@@ -424,16 +416,9 @@ export const nftAbi = [
   },
   {
     inputs: [
-      { internalType: "string", name: "_notRevealedURI", type: "string" },
+      { internalType: "address", name: "_stakeAddress", type: "address" },
     ],
-    name: "setNotRevealedURI",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [{ internalType: "bool", name: "_state", type: "bool" }],
-    name: "setRevealed",
+    name: "setStakingContract",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
@@ -493,7 +478,7 @@ export const nftAbi = [
     type: "function",
   },
   {
-    inputs: [{ internalType: "uint256", name: "_tokenId", type: "uint256" }],
+    inputs: [{ internalType: "uint256", name: "tokenId", type: "uint256" }],
     name: "tokenURI",
     outputs: [{ internalType: "string", name: "", type: "string" }],
     stateMutability: "view",

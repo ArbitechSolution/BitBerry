@@ -23,7 +23,7 @@ import {
   tokenLpStakingAbi,
 } from "../../utils/tokenLptokenStaking";
 
-function Lp_Pool2() {
+function Lp_Pool2({ibbrFunc}) {
   const dispatch = useDispatch();
   let acc = useSelector((state) => state.connect?.connection);
   let [animationState, setAnimationState] = useState(true);
@@ -91,18 +91,23 @@ function Lp_Pool2() {
       } else if (acc == "Connect Wallet") {
         toast.info("Please connect wallet");
       } else {
+        if(stake>0){
+          console.log("unstake called")
         const web3 = window.web3;
         let tokenStaking = new web3.eth.Contract(tokenLpStakingAbi, tokenLpStaking);
-        let value = await tokenStaking.methods.isLPTimeCompleted(acc).call();
-        if(value==false){
-          toast.error("Unstake time not reached")
-        }
-        else{
+    
           await tokenStaking.methods.withdrawLPtoken().send({
             from:acc
           });
           toast.success("successfully unstake")
+          ibbrFunc()
+          staked();
+          ibr();
+          balance();
         }
+      else{
+        toast.error("IBBR points is not enough ")
+      }
       }
   }
   catch(e){
@@ -142,6 +147,9 @@ function Lp_Pool2() {
 
           toast.success("value send");
           setLoader(false)
+          staked();
+          ibr();
+          balance();
         
       }
     } catch (e) {
@@ -168,7 +176,7 @@ function Lp_Pool2() {
     let newValue = Number(web3.utils.fromWei(value)).toFixed(2);
     console.log(newValue)
     toast.success("successfully redeem");
-    // setIbr(newValue);
+    ibbrFunc()
     }
   }
   catch(e){

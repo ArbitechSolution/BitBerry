@@ -1,4 +1,4 @@
-export const tokenLpStaking = "0x95B4999BFB7E37dAa42C51322Bd4285B85f4FE05";
+export const tokenLpStaking = "0xe37974259C81aCcCC0d730b40cC8054d53c6d019";
 export const tokenLpStakingAbi = [
   {
     inputs: [
@@ -450,13 +450,6 @@ export const tokenLpStakingAbi = [
     type: "function",
   },
   {
-    inputs: [{ internalType: "address", name: "", type: "address" }],
-    name: "userBBRStaked",
-    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
     inputs: [
       { internalType: "address", name: "", type: "address" },
       { internalType: "uint256", name: "", type: "uint256" },
@@ -469,13 +462,6 @@ export const tokenLpStakingAbi = [
       { internalType: "uint256", name: "unFreezeTime", type: "uint256" },
       { internalType: "bool", name: "isWithdrawl", type: "bool" },
     ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [{ internalType: "address", name: "", type: "address" }],
-    name: "userLPStaked",
-    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
     stateMutability: "view",
     type: "function",
   },

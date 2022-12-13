@@ -65,9 +65,8 @@ function LuckyDraw() {
           nftAddress
         );
         let totalIds = await nftContract.methods.walletOfOwner(acc).call();
-
         totalIds = totalIds.slice(-value);
-        // console.log("current items",totalIds)
+        console.log("current items",totalIds)
         let simplleArray = [];
         totalIds.forEach(async (ids) => {
           if (ids <= 35000) {
@@ -138,6 +137,8 @@ function LuckyDraw() {
           toast.success("successfully mint")
           setLoader(false)
           getCurrentNfts();
+          balances()
+          
           // setShow(true);
         }
       }

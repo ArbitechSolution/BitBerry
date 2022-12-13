@@ -31,32 +31,12 @@ function Lp_Pool() {
   let [animationState, setAnimationState] = useState(true);
   let [animationState1, setAnimationState1] = useState(false);
   let [approveValue, setApproveValue] = useState("");
-  let [stake,setStaked]=useState("0")
-  let [ibrValue,setIbr]=useState("0")
   let [balanc,setBalance]=useState("0")
   let [ibbrValue,setIbbrValue]=useState("0")
 
   const connectWallet = () =>{
 		dispatch(connectionAction())
 	}
-
-  // const staked=async()=>{
-  //   console.log("enter value")
-  //   const web3 = window.web3;
-  //   let tokenStaking = new web3.eth.Contract(tokenLpStakingAbi, tokenLpStaking);
-  //   let staked=await tokenStaking.methods.User(acc).call();
-  //   console.log("staked",staked)
-  //   console.log("staked1",web3.utils.fromWei(staked.mystakedTokens))
-  //   setStaked((web3.utils.fromWei(staked.mystakedTokens)))
-  // }
-
-  // const ibr=async()=>{
-  //   const web3 = window.web3;
-  //   let tokenStaking = new web3.eth.Contract(tokenLpStakingAbi, tokenLpStaking);
-  //   let value=await tokenStaking.methods.BBPcalculator(acc).call();
-  //   let newValue=Number((web3.utils.fromWei(value))).toFixed(2)
-  //   setIbr(newValue)
-  // }
 
   const balances=async()=>{
     const web3 = window.web3;
@@ -75,65 +55,7 @@ function Lp_Pool() {
     setBalance(Number(web3.utils.fromWei(balance)))
   }
 
-  const maxFun=async()=>{
-    try{
-      if (acc == "No Wallet") {
-        toast.info("Wallet not connected");
-      } else if (acc == "Wrong Network") {
-        toast.info("Wrong Network");
-      } else if (acc == "Connect Wallet") {
-        toast.info("Please connect wallet");
-      }else{
-        const web3 = window.web3;
-        let tokenContract = new web3.eth.Contract(bbrtokenAbi, bbrTokenAddress);
-        let balance=await tokenContract.methods.balanceOf(acc).call();
-        let newVal=  web3.utils.fromWei(balance.toString());
-        setApproveValue(newVal)
-      }
-    }
-    catch(e){
-      console.log("e", e);
-    }
-  }
-
-  const Approve=async()=>{
-    try{
-      if (acc == "No Wallet") {
-        toast.info("Wallet not connected");
-      } else if (acc == "Wrong Network") {
-        toast.info("Wrong Network");
-      } else if (acc == "Connect Wallet") {
-        toast.info("Please connect wallet");
-      }else{
-      if(approveValue>=500){
-        const web3 = window.web3;
-        let tokenContract = new web3.eth.Contract(bbrtokenAbi,bbrTokenAddress);
-        let tokenStaking = new web3.eth.Contract(tokenLpStakingAbi, tokenLpStaking);
-        await tokenContract.methods.approve(tokenLpStaking,web3.utils.toWei(approveValue.toString())).send({
-          from:acc 
-        })
-        await tokenStaking.methods
-        .Stake(web3.utils.toWei(approveValue.toString()))
-        .send({
-          from:acc
-        });
-
-        toast.success("value send")
-      }
-      else{
-        toast.error("value less than 500")
-      }
-    }
-  }
-    catch(e){
-      console.log("e", e);
-      toast.error("Transaction failed")
-    }
-
-  }
   useEffect(()=>{
-    // staked()
-    // ibr()
     balance()
     balances()
   },[acc])
@@ -327,8 +249,8 @@ function Lp_Pool() {
             <div className="row mt-4 d-flex justify-content-center mb-3">
               <div className="col-11">
                 <div className="row d-flex justify-content-between mbl_responsive">
-                 <Lp_Pool1 />
-                 <Lp_Pool2 />
+                 <Lp_Pool1 ibbrFunc={balances} totalBalance={balance} />
+                 <Lp_Pool2 ibbrFunc={balances}  />
                  <Lp_Pool3 />
                  <Lp_Pool4 />
                  <Lp_Pool5 />
