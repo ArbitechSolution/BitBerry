@@ -154,7 +154,7 @@ function Lp_Pool() {
           <div className="col-11 lp_pool_border">
             <div className="row ">
               <div className="col-12 d-flex justify-content-end p-3">
-                <IoClose />
+                {/* <IoClose /> */}
               </div>
             </div>
             {/* ************************************************************************ */}

@@ -28,10 +28,12 @@ const array = [
 ];
 const items = [...array];
 
-function Items({ currentItems }) {
+function Items({ currentItems,nftFetch }) {
   const [show, setShow] = useState(false);
-  const handleMint = () => {
+  const [nft,setNft] =useState([])
+  const handleMint = async(item) => {
     console.log("handle Mint");
+    setNft(item)
     setShow(true);
   };
 
@@ -60,7 +62,7 @@ function Items({ currentItems }) {
               <div className="col-10 col-md-10 col-lg-10 d-flex justify-content-center mt-4">
                 <button
                   onClick={() => {
-                    handleMint();
+                    handleMint(item);
                   }}
                   className="button btn_bg nftImgTransferButton"
                 >
@@ -82,7 +84,7 @@ function Items({ currentItems }) {
         >
           <Modal.Header closeButton></Modal.Header>
           <Modal.Body>
-            <NftTransfer />
+            <NftTransfer nftFetches={nftFetch}  transferNft={nft} />
           </Modal.Body>
         </Modal>
       )}
@@ -217,7 +219,7 @@ function PaginatedItems({ itemsPerPage }) {
 
   return (
     <>
-      <Items currentItems={currentItems} />
+      <Items nftFetch={getData} currentItems={currentItems} />
       <ReactPaginate
         nextLabel={<IoCaretForwardSharp />}
         onPageChange={handlePageClick}

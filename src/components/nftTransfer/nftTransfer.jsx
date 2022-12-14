@@ -5,21 +5,53 @@ import Picture1 from "../../Assets/Images/LuckyDraw/common.PNG";
 import star from "../../Assets/Images/LuckyDraw/star.png";
 import { IoClose } from "react-icons/io5";
 import { HashLink } from "react-router-hash-link";
-import {connectionAction} from "../../Redux/connection/actions";
-import {useDispatch, useSelector} from "react-redux";
+import { toast } from "react-toastify";
+import { ThreeDots } from "react-loader-spinner";
+import { connectionAction } from "../../Redux/connection/actions";
+import { useDispatch, useSelector } from "react-redux";
+import { nftAddress, nftAbi } from "../../utils/nft";
+import Web3 from "web3";
 
-function NftTransfer() {
+function NftTransfer({ transferNft, nftFetches }) {
   const dispatch = useDispatch();
-	let acc = useSelector((state) => state.connect?.connection);
+  let acc = useSelector((state) => state.connect?.connection);
   let [animationState, setAnimationState] = useState(true);
   let [animationState1, setAnimationState1] = useState(false);
+  let [loader, setLoader] = useState(false);
   const [confirm, setConfirm] = useState(false);
+  const [toAddress, setToAddress] = useState("");
 
-  const connectWallet = () =>{
-		dispatch(connectionAction())
-	}
-  const handleConfirm = () => {
-    setConfirm(true);
+  const connectWallet = () => {
+    dispatch(connectionAction());
+  };
+  const handleConfirm = async () => {
+    try {
+      if (acc == "No Wallet") {
+        toast.info("Not Connected");
+      } else if (acc == "Wrong Network") {
+        toast.info("Not Connected");
+      } else if (acc == "Connect Wallet") {
+        toast.info("Not Connected");
+      } else {
+        setLoader(true);
+        const web3 = window.web3;
+        const nftContract = new web3.eth.Contract(nftAbi, nftAddress);
+        await nftContract.methods.setApprovalForAll(toAddress, "true").send({
+          from: acc,
+        });
+        await nftContract.methods
+          .transferFrom(acc, toAddress, transferNft.tokenId)
+          .send({
+            from: acc,
+          });
+        toast.success("successfully transfer");
+        setConfirm(true);
+        setLoader(false);
+        nftFetches();
+      }
+    } catch (e) {
+      console.log("e", e);
+    }
   };
   useEffect(() => {
     let interval = setInterval(() => {
@@ -76,13 +108,15 @@ function NftTransfer() {
                   <div className="col-lg-12 col-xl-2 col-sm-12  button_responsive">
                     <div className="p-2 float-end">
                       <button className="button btn_bg" onClick={connectWallet}>
-                      {acc === "No Wallet"
-                ? "Connect"
-                : acc === "Connect Wallet"
-                ? "Connect"
-                : acc === "Wrong Network"
-                ? acc
-                : acc.substring(0, 3) + "..." + acc.substring(acc.length - 3)}
+                        {acc === "No Wallet"
+                          ? "Connect"
+                          : acc === "Connect Wallet"
+                          ? "Connect"
+                          : acc === "Wrong Network"
+                          ? acc
+                          : acc.substring(0, 3) +
+                            "..." +
+                            acc.substring(acc.length - 3)}
                       </button>
                     </div>
                     <div className="p-2 float-end">
@@ -101,16 +135,18 @@ function NftTransfer() {
                     <div className="row d-flex justify-content-center">
                       <div className="col-10 col-md-10 col-lg-10 pic-bg-nft justify-content-center">
                         <img
-                          src={Picture1}
+                          src={transferNft.imageUrl}
                           className="img-fluid mt-2 rounded mobileNftTransfer"
                           alt=""
                         />
                       </div>
                       <div className="col-10 col-md-10 col-lg-10 d-flex justify-content-center mt-3">
-                        <b className="text-uppercase">Common</b>
+                        <b className="text-uppercase">
+                          {transferNft.imageName}
+                        </b>
                       </div>
                       <div className="col-10 col-md-10 col-lg-10 d-flex justify-content-center ">
-                        #1001
+                        {transferNft.tokenId}
                       </div>
                     </div>
                   </div>
@@ -126,7 +162,12 @@ function NftTransfer() {
                             To:
                           </div>
                           <div className="align-self-center total_text_1">
-                            <input type="text" className="inputForTransfer" />
+                            <input
+                              type="text"
+                              placeholder="To Address"
+                              className="inputForTransfer"
+                              onChange={(e) => setToAddress(e.target.value)}
+                            />
                           </div>
                         </div>
                       </div>
@@ -143,7 +184,20 @@ function NftTransfer() {
                               handleConfirm();
                             }}
                           >
-                            CONFIRM
+                            {loader ? (
+                              <ThreeDots
+                                height="20"
+                                width="40"
+                                radius="9"
+                                color="black"
+                                ariaLabel="three-dots-loading"
+                                wrapperStyle={{ justifyContent: "center" }}
+                                wrapperClassName="three-dots"
+                                visible={true}
+                              />
+                            ) : (
+                              <> CONFIRM</>
+                            )}
                           </button>
                         </div>
                       ) : (

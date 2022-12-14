@@ -33,7 +33,7 @@ function MyNFT() {
           <div className="col-11 lucky_draw_border mb-5 ">
             <div className="row ">
               <div className="col-12 d-flex justify-content-end p-3">
-                <IoClose />
+                {/* <IoClose /> */}
               </div>
             </div>
             <div className="row ">

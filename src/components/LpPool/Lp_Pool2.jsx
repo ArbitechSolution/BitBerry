@@ -11,7 +11,7 @@ import Picture6 from "../../Assets/Images/LpPool/Rectangle1105.png";
 import Picture7 from "../../Assets/Images/LpPool/Rectangle1101.png";
 import ComingSoonButton from "../../Assets/Images/coming-soon1.png";
 import { toast } from "react-toastify";
-import { ThreeDots  } from 'react-loader-spinner'
+import { ThreeDots } from "react-loader-spinner";
 import { IoAlertCircle, IoClose } from "react-icons/io5";
 import { OverlayTrigger, Tooltip, Popover } from "react-bootstrap";
 import { HashLink } from "react-router-hash-link";
@@ -23,12 +23,14 @@ import {
   tokenLpStakingAbi,
 } from "../../utils/tokenLptokenStaking";
 
-function Lp_Pool2({ibbrFunc}) {
+function Lp_Pool2({ ibbrFunc }) {
   const dispatch = useDispatch();
   let acc = useSelector((state) => state.connect?.connection);
   let [animationState, setAnimationState] = useState(true);
   let [animationState1, setAnimationState1] = useState(false);
-  let [loader,setLoader]=useState(false)
+  let [loader, setLoader] = useState(false);
+  let [unstakeLoader, setUnstkeLoader] = useState(false);
+  let [redeemLoader, setRedeemLoader] = useState(false);
   let [approveValue, setApproveValue] = useState("");
   let [stake, setStaked] = useState("0");
   let [ibrValue, setIbr] = useState("0");
@@ -49,9 +51,9 @@ function Lp_Pool2({ibbrFunc}) {
     const web3 = window.web3;
     let tokenStaking = new web3.eth.Contract(tokenLpStakingAbi, tokenLpStaking);
     let value = await tokenStaking.methods.RPcalculatorforLP(acc).call();
-    console.log("ibbr1",value);
+    console.log("ibbr1", value);
     let newValue = Number(web3.utils.fromWei(value)).toFixed(3);
-    console.log("ibbr2",newValue);
+    console.log("ibbr2", newValue);
     setIbr(newValue);
   };
 
@@ -72,7 +74,10 @@ function Lp_Pool2({ibbrFunc}) {
         toast.info("Please connect wallet");
       } else {
         const web3 = window.web3;
-        let tokenContract = new web3.eth.Contract(bbrLptokenAbi, bbrLpTokenAddress);
+        let tokenContract = new web3.eth.Contract(
+          bbrLptokenAbi,
+          bbrLpTokenAddress
+        );
         let balance = await tokenContract.methods.balanceOf(acc).call();
         let newVal = Number(web3.utils.fromWei(balance));
         setApproveValue(newVal);
@@ -82,7 +87,7 @@ function Lp_Pool2({ibbrFunc}) {
     }
   };
 
-  const unStake=async()=>{
+  const unStake = async () => {
     try {
       if (acc == "No Wallet") {
         toast.info("Wallet not connected");
@@ -91,29 +96,34 @@ function Lp_Pool2({ibbrFunc}) {
       } else if (acc == "Connect Wallet") {
         toast.info("Please connect wallet");
       } else {
-        if(stake>0){
-          console.log("unstake called")
-        const web3 = window.web3;
-        let tokenStaking = new web3.eth.Contract(tokenLpStakingAbi, tokenLpStaking);
-    
+        if (stake == 0 && ibrValue == 0) {
+          toast.error("Stake First ");
+        } else if (stake == 0) {
+          toast.error("Stake First ");
+        } else {
+          setUnstkeLoader(true);
+          const web3 = window.web3;
+          let tokenStaking = new web3.eth.Contract(
+            tokenLpStakingAbi,
+            tokenLpStaking
+          );
+
           await tokenStaking.methods.withdrawLPtoken().send({
-            from:acc
+            from: acc,
           });
-          toast.success("successfully unstake")
-          ibbrFunc()
+          toast.success("successfully unstake");
+          setUnstkeLoader(false);
+          ibbrFunc();
           staked();
           ibr();
           balance();
         }
-      else{
-        toast.error("IBBR points is not enough ")
       }
-      }
-  }
-  catch(e){
-    console.log("e",e)
-  }
-}
+    } catch (e) {
+      console.log("e", e);
+      setUnstkeLoader(false);
+    }
+  };
 
   const Approve = async () => {
     try {
@@ -124,7 +134,10 @@ function Lp_Pool2({ibbrFunc}) {
       } else if (acc == "Connect Wallet") {
         toast.info("Please connect wallet");
       } else {
-          setLoader(true)
+        if (approveValue <= 0) {
+          toast.error("insufficient LP balance");
+        } else {
+          setLoader(true);
           const web3 = window.web3;
           let tokenContract = new web3.eth.Contract(
             bbrLptokenAbi,
@@ -146,21 +159,21 @@ function Lp_Pool2({ibbrFunc}) {
             });
 
           toast.success("value send");
-          setLoader(false)
+          setLoader(false);
           staked();
           ibr();
           balance();
-        
+        }
       }
     } catch (e) {
       console.log("e", e);
       toast.error("Transaction failed");
-      setLoader(false)
+      setLoader(false);
     }
   };
 
-  const redem=async()=>{
-    try{
+  const redem = async () => {
+    try {
       if (acc == "No Wallet") {
         toast.info("Wallet not connected");
       } else if (acc == "Wrong Network") {
@@ -168,35 +181,43 @@ function Lp_Pool2({ibbrFunc}) {
       } else if (acc == "Connect Wallet") {
         toast.info("Please connect wallet");
       } else {
-    const web3 = window.web3;
-    let tokenStaking = new web3.eth.Contract(tokenLpStakingAbi, tokenLpStaking);
-    let value = await tokenStaking.methods.redeemforLp().send({
-      from:acc
-    });
-    let newValue = Number(web3.utils.fromWei(value)).toFixed(2);
-    console.log(newValue)
-    toast.success("successfully redeem");
-    ibbrFunc()
+        if (Number(ibrValue) <= 0) {
+          toast.error("Wait for ibbr points");
+        } else {
+          setRedeemLoader(true);
+          const web3 = window.web3;
+          let tokenStaking = new web3.eth.Contract(
+            tokenLpStakingAbi,
+            tokenLpStaking
+          );
+          let value = await tokenStaking.methods.redeemforLp().send({
+            from: acc,
+          });
+          let newValue = Number(web3.utils.fromWei(value)).toFixed(2);
+          console.log(newValue);
+          toast.success("successfully redeem");
+          setRedeemLoader(false);
+          ibbrFunc();
+        }
+      }
+    } catch (e) {
+      console.log("e", e);
+      setRedeemLoader(false);
     }
-  }
-  catch(e){
-    console.log("e", e);
-    toast.error("redeem failed");
-  }
-}
+  };
 
   useEffect(() => {
     let interval = setInterval(() => {
+      staked();
+      ibr();
+      balance();
+    }, 30000);
     staked();
     ibr();
     balance();
-    },30000);
-    staked();
-    ibr();
-    balance();
-    return () => clearInterval(interval)
+    return () => clearInterval(interval);
   }, [acc]);
-  
+
   useEffect(() => {
     let interval = setInterval(() => {
       setAnimationState((prevState) => !prevState);
@@ -258,10 +279,18 @@ function Lp_Pool2({ibbrFunc}) {
           <div className="row">
             <div className="col-10  d-flex justify-content-between mt-3">
               <div className="">
-                <img src={data[0].button} className="img-fluid" width={"33px"} />
+                <img
+                  src={data[0].button}
+                  className="img-fluid"
+                  width={"33px"}
+                />
               </div>
               <div>
-                <img src={data[0].picture} className="img-fluid" width={"147px"} />
+                <img
+                  src={data[0].picture}
+                  className="img-fluid"
+                  width={"147px"}
+                />
               </div>
             </div>
           </div>
@@ -285,7 +314,7 @@ function Lp_Pool2({ibbrFunc}) {
           </div>
           <div className="row d-flex justify-content-center">
             <div className="col-11 d-flex justify-content-between">
-              <div className="wallet_text">Enter {data.EnterBBR}</div>
+              <div className="wallet_text">Enter LP {data.EnterBBR}</div>
               <div className="button_inside d-flex justify-content-center">
                 <input
                   className="input_inside_button"
@@ -309,25 +338,55 @@ function Lp_Pool2({ibbrFunc}) {
       <div className="row d-flex justify-content-center buttoun_background">
         <div className=" mt-3">
           <button className="button_bg" onClick={Approve}>
-          {
-              loader?(
-                <ThreeDots
+            {loader ? (
+              <ThreeDots
                 height="20"
                 width="40"
                 radius="9"
                 color="black"
                 ariaLabel="three-dots-loading"
-                wrapperStyle={{justifyContent:"center"}}
+                wrapperStyle={{ justifyContent: "center" }}
                 wrapperClassName="three-dots"
                 visible={true}
               />
-              ):(<> Approve & Stake</>)
-            }
+            ) : (
+              <> Approve & Stake</>
+            )}
           </button>
         </div>
         <div className=" d-flex  flex-row justify-content-around ">
-          <button className="button_Unstake" onClick={unStake}> Unstake</button>
-          <button className=" button_redeem" onClick={redem}>Redeem</button>
+          <button className="button_Unstake" onClick={unStake}>
+            {unstakeLoader ? (
+              <ThreeDots
+                height="20"
+                width="40"
+                radius="9"
+                color="black"
+                ariaLabel="three-dots-loading"
+                wrapperStyle={{ justifyContent: "center" }}
+                wrapperClassName="three-dots"
+                visible={true}
+              />
+            ) : (
+              <> Unstake</>
+            )}
+          </button>
+          <button className=" button_redeem" onClick={redem}>
+            {redeemLoader ? (
+              <ThreeDots
+                height="20"
+                width="40"
+                radius="9"
+                color="black"
+                ariaLabel="three-dots-loading"
+                wrapperStyle={{ justifyContent: "center" }}
+                wrapperClassName="three-dots"
+                visible={true}
+              />
+            ) : (
+              <> Redeem</>
+            )}
+          </button>
         </div>
       </div>
     </div>
