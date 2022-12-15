@@ -107,7 +107,7 @@ function Lp_Pool7() {
           <div className="row d-flex justify-content-center">
             <div className="col-11 d-flex justify-content-between">
               <div className="wallet_text">iBBR Point</div>
-              <div className="token_text">{ibrValue} BBR</div>
+              <div className="token_text">{ibrValue} iBBR</div>
             </div>
           </div>
           <div className="row d-flex justify-content-center">

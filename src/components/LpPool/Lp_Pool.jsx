@@ -8,59 +8,61 @@ import Picture3 from "../../Assets/Images/LpPool/Rectangle1102.png";
 import Picture4 from "../../Assets/Images/LpPool/Rectangle1103.png";
 import Picture5 from "../../Assets/Images/LpPool/Rectangle1104.png";
 import Picture6 from "../../Assets/Images/LpPool/Rectangle1105.png";
-import Picture7 from "../../Assets/Images/LpPool/Rectangle1101.png"
-import ComingSoonButton from "../../Assets/Images/coming-soon1.png"
+import Picture7 from "../../Assets/Images/LpPool/Rectangle1101.png";
+import ComingSoonButton from "../../Assets/Images/coming-soon1.png";
 import { toast } from "react-toastify";
 import { IoAlertCircle, IoClose } from "react-icons/io5";
 import { OverlayTrigger, Tooltip, Popover } from "react-bootstrap";
 import { HashLink } from "react-router-hash-link";
-import {useDispatch, useSelector} from "react-redux";
-import {connectionAction} from "../../Redux/connection/actions";
-import {bbrTokenAddress,bbrtokenAbi} from "../../utils/bbr";
-import {tokenLpStaking,tokenLpStakingAbi} from "../../utils/tokenLptokenStaking";
-import Lp_Pool1 from "./Lp_Pool1"
-import Lp_Pool2 from "./Lp_Pool2"
-import Lp_Pool3 from "./Lp_Pool3"
-import Lp_Pool4 from "./Lp_Pool4"
-import Lp_Pool5 from "./Lp_Pool5"
-import Lp_Pool6 from "./Lp_Pool6"
-import Lp_Pool7 from "./Lp_Pool7"
+import { useDispatch, useSelector } from "react-redux";
+import { connectionAction } from "../../Redux/connection/actions";
+import { bbrTokenAddress, bbrtokenAbi } from "../../utils/bbr";
+import {
+  tokenLpStaking,
+  tokenLpStakingAbi,
+} from "../../utils/tokenLptokenStaking";
+import Lp_Pool1 from "./Lp_Pool1";
+import Lp_Pool2 from "./Lp_Pool2";
+import Lp_Pool3 from "./Lp_Pool3";
+import Lp_Pool4 from "./Lp_Pool4";
+import Lp_Pool5 from "./Lp_Pool5";
+import Lp_Pool6 from "./Lp_Pool6";
+import Lp_Pool7 from "./Lp_Pool7";
 function Lp_Pool() {
   const dispatch = useDispatch();
-	let acc = useSelector((state) => state.connect?.connection);
+  let acc = useSelector((state) => state.connect?.connection);
   let [animationState, setAnimationState] = useState(true);
   let [animationState1, setAnimationState1] = useState(false);
   let [approveValue, setApproveValue] = useState("");
-  let [balanc,setBalance]=useState("0")
-  let [ibbrValue,setIbbrValue]=useState("0")
+  let [balanc, setBalance] = useState("0");
+  let [ibbrValue, setIbbrValue] = useState("0");
 
-  const connectWallet = () =>{
-		dispatch(connectionAction())
-	}
+  const connectWallet = () => {
+    dispatch(connectionAction());
+  };
 
-  const balances=async()=>{
+  const balances = async () => {
     const web3 = window.web3;
     let tokenStaking = new web3.eth.Contract(tokenLpStakingAbi, tokenLpStaking);
-    let value=await tokenStaking.methods._balances(acc).call();
-    let newValue=parseInt(Number((web3.utils.fromWei(value))))
-    console.log("ibbr value value",newValue)
-    setIbbrValue( newValue)
-  }
+    let value = await tokenStaking.methods._balances(acc).call();
+    let newValue = parseFloat(web3.utils.fromWei(value));
+    console.log("ibbr total value", newValue);
+    setIbbrValue(newValue);
+  };
 
-  const balance=async()=>{
+  const balance = async () => {
     const web3 = window.web3;
     let tokenContract = new web3.eth.Contract(bbrtokenAbi, bbrTokenAddress);
-    let balance=await tokenContract.methods.balanceOf(acc).call();
-    console.log(balance)
-    setBalance(Number(web3.utils.fromWei(balance)))
-  }
+    let balance = await tokenContract.methods.balanceOf(acc).call();
+    console.log(balance);
+    setBalance(parseFloat(web3.utils.fromWei(balance)));
+  };
 
-  useEffect(()=>{
-    balance()
-    balances()
-  },[acc])
   useEffect(() => {
-    
+    balance();
+    balances();
+  }, [acc]);
+  useEffect(() => {
     let interval = setInterval(() => {
       setAnimationState((prevState) => !prevState);
       setAnimationState1((prevState) => !prevState);
@@ -71,7 +73,7 @@ function Lp_Pool() {
     {
       picture: Picture1,
       token1: "BBR",
-      EnterBBR:"BBR",
+      EnterBBR: "BBR",
       token2: "iBBR",
       wallet: "0 BBR",
       iBBR_Point: "0 IBBR ",
@@ -82,7 +84,7 @@ function Lp_Pool() {
     {
       picture: Picture7,
       token1: "BBR",
-      EnterBBR:"BBR LP",
+      EnterBBR: "BBR LP",
       token2: "iBBR",
       wallet: "0 BBR",
       iBBR_Point: "0 IBBR ",
@@ -100,7 +102,7 @@ function Lp_Pool() {
       staked: "o IBBR",
       tooltip:
         "Stake NFT Tier Card to earn iBBR point. NFT Tier Card can unstake anytime",
-        button: ComingSoonButton
+      button: ComingSoonButton,
     },
     {
       picture: Picture3,
@@ -111,7 +113,7 @@ function Lp_Pool() {
       staked: "o IBBR",
       tooltip:
         "Stake NFT Tier Card to earn iBBR point. NFT Tier Card can unstake anytime",
-        button: ComingSoonButton
+      button: ComingSoonButton,
     },
     {
       picture: Picture4,
@@ -122,7 +124,7 @@ function Lp_Pool() {
       staked: "o IBBR",
       tooltip:
         "Stake NFT Tier Card to earn iBBR point. NFT Tier Card can unstake anytime",
-        button: ComingSoonButton
+      button: ComingSoonButton,
     },
     {
       picture: Picture5,
@@ -133,7 +135,7 @@ function Lp_Pool() {
       staked: "o IBBR",
       tooltip:
         "Stake NFT Tier Card to earn iBBR point. NFT Tier Card can unstake anytime",
-        button: ComingSoonButton
+      button: ComingSoonButton,
     },
     {
       picture: Picture6,
@@ -144,7 +146,7 @@ function Lp_Pool() {
       staked: "o IBBR",
       tooltip:
         "Stake NFT Tier Card to earn iBBR point. NFT Tier Card can unstake anytime",
-        button: ComingSoonButton
+      button: ComingSoonButton,
     },
   ];
   return (
@@ -181,7 +183,7 @@ function Lp_Pool() {
                             : "header"
                         }
                       >
-                        LP POOL
+                        POOL
                       </span>
                       <span className="">
                         {/* <IoAlertCircle/> */}
@@ -215,15 +217,16 @@ function Lp_Pool() {
                   <div className=" col-md-12 col-xl-3 col-sm-12  button_responsive">
                     <div className="p-2 me-4 float-end">
                       <button className="button btn_bg" onClick={connectWallet}>
-                      {acc === "No Wallet"
-                ? "Connect"
-                : acc === "Connect Wallet"
-                ? "Connect"
-                : acc === "Wrong Network"
-                ? acc
-                : acc.substring(0, 3) + "..." + acc.substring(acc.length - 3)}
+                        {acc === "No Wallet"
+                          ? "Connect"
+                          : acc === "Connect Wallet"
+                          ? "Connect"
+                          : acc === "Wrong Network"
+                          ? acc
+                          : acc.substring(0, 3) +
+                            "..." +
+                            acc.substring(acc.length - 3)}
                       </button>
-                      
                     </div>
                     <div className="p-2 me-4 float-end">
                       <HashLink to="/myNft">
@@ -234,11 +237,21 @@ function Lp_Pool() {
                       <div className="balance_text">Balance:</div>
                       <div className="d-flex flex-row justify-content-between ">
                         <div className="">BBR</div>
-                        <div className=" ">{balanc}</div>
+                        <div className=" ">
+                          {balanc.toLocaleString(undefined, {
+                            minimumFractionDigits: 0,
+                            maximumFractionDigits: 3,
+                          })}
+                        </div>
                       </div>
                       <div className="d-flex flex-row justify-content-between ">
                         <div className="">iBBR</div>
-                        <div className="pb-2">{ibbrValue}</div>
+                        <div className="pb-2">
+                          {ibbrValue.toLocaleString(undefined, {
+                            minimumFractionDigits: 0,
+                            maximumFractionDigits: 3,
+                          })}
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -249,13 +262,13 @@ function Lp_Pool() {
             <div className="row mt-4 d-flex justify-content-center mb-3">
               <div className="col-11">
                 <div className="row d-flex justify-content-between mbl_responsive">
-                 <Lp_Pool1 ibbrFunc={balances} totalBalance={balance} />
-                 <Lp_Pool2 ibbrFunc={balances}  />
-                 <Lp_Pool3 />
-                 <Lp_Pool4 />
-                 <Lp_Pool5 />
-                 <Lp_Pool6 />
-                 <Lp_Pool7 />
+                  <Lp_Pool1 ibbrFunc={balances} totalBalance={balance} />
+                  <Lp_Pool2 ibbrFunc={balances} />
+                  <Lp_Pool3 />
+                  <Lp_Pool4 />
+                  <Lp_Pool5 />
+                  <Lp_Pool6 />
+                  <Lp_Pool7 />
 
                   {/* ************************************************************************ */}
                   {/* <div className="col-3 border"></div>

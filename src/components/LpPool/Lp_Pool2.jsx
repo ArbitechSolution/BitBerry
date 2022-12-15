@@ -44,7 +44,7 @@ function Lp_Pool2({ ibbrFunc }) {
     const web3 = window.web3;
     let tokenStaking = new web3.eth.Contract(tokenLpStakingAbi, tokenLpStaking);
     let staked = await tokenStaking.methods.totalLPStaked(acc).call();
-    setStaked(Number(web3.utils.fromWei(staked)));
+    setStaked(parseFloat(web3.utils.fromWei(staked)));
   };
 
   const ibr = async () => {
@@ -52,7 +52,7 @@ function Lp_Pool2({ ibbrFunc }) {
     let tokenStaking = new web3.eth.Contract(tokenLpStakingAbi, tokenLpStaking);
     let value = await tokenStaking.methods.RPcalculatorforLP(acc).call();
     console.log("ibbr1", value);
-    let newValue = Number(web3.utils.fromWei(value)).toFixed(3);
+    let newValue = parseFloat(web3.utils.fromWei(value));
     console.log("ibbr2", newValue);
     setIbr(newValue);
   };
@@ -61,7 +61,7 @@ function Lp_Pool2({ ibbrFunc }) {
     const web3 = window.web3;
     let tokenContract = new web3.eth.Contract(bbrLptokenAbi, bbrLpTokenAddress);
     let balance = await tokenContract.methods.balanceOf(acc).call();
-    setBalance(Number(web3.utils.fromWei(balance)));
+    setBalance(parseFloat(web3.utils.fromWei(balance)));
   };
 
   const maxFun = async () => {
@@ -158,7 +158,7 @@ function Lp_Pool2({ ibbrFunc }) {
               from: acc,
             });
 
-          toast.success("value send");
+          toast.success("successfully stacked");
           setLoader(false);
           staked();
           ibr();
@@ -195,7 +195,7 @@ function Lp_Pool2({ ibbrFunc }) {
           });
           let newValue = Number(web3.utils.fromWei(value)).toFixed(2);
           console.log(newValue);
-          toast.success("successfully redeem");
+          toast.success("successfully redeem but LP lock for 10 days");
           setRedeemLoader(false);
           ibbrFunc();
         }
@@ -243,9 +243,9 @@ function Lp_Pool2({ ibbrFunc }) {
   return (
     <div className="col-3 Cardborder background_card mb-5">
       <div className="row mt-2 mb-2">
-        <div className="col-3"></div>
-        <div className="text-center card_title col-6">BBR</div>
-        <div className="text-end col-3">
+        {/* <div className="col-3"></div> */}
+        <div className="text-center card_title col-10 pl-2">BBR/BNB LP</div>
+        <div className="text-end col-1">
           <OverlayTrigger
             className="toolTip_inner"
             placement="bottom-end"
@@ -297,19 +297,31 @@ function Lp_Pool2({ ibbrFunc }) {
           <div className="row d-flex justify-content-center">
             <div className="col-11 d-flex justify-content-between">
               <div className="wallet_text">Wallet</div>
-              <div className="token_text">{balanc} LP</div>
+              <div className="token_text">
+              {balanc.toLocaleString(undefined, {
+                  minimumFractionDigits: 0,
+                  maximumFractionDigits: 3,
+                })} LP</div>
             </div>
           </div>
           <div className="row d-flex justify-content-center">
             <div className="col-11 d-flex justify-content-between">
               <div className="wallet_text">iBBR Point</div>
-              <div className="token_text">{ibrValue} LP</div>
+              <div className="token_text">
+              {ibrValue.toLocaleString(undefined, {
+                  minimumFractionDigits: 0,
+                  maximumFractionDigits: 3,
+                })} iBBRLP</div>
             </div>
           </div>
           <div className="row d-flex justify-content-center">
             <div className="col-11 d-flex justify-content-between">
               <div className="wallet_text">Staked</div>
-              <div className="token_text">{stake} LP</div>
+              <div className="token_text">
+              {stake.toLocaleString(undefined, {
+                  minimumFractionDigits: 0,
+                  maximumFractionDigits: 3,
+                })}LP</div>
             </div>
           </div>
           <div className="row d-flex justify-content-center">

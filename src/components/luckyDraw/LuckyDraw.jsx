@@ -19,36 +19,40 @@ import { toast } from "react-toastify";
 import { HashLink } from "react-router-hash-link";
 import NftTicket from "../nftTicket/nftTicket";
 import { Modal, ModalFooter } from "react-bootstrap";
-import {useDispatch, useSelector} from "react-redux";
-import {connectionAction} from "../../Redux/connection/actions"
-import {bbrTokenAddress,bbrtokenAbi} from "../../utils/bbr";
-import {tokenLpStaking,tokenLpStakingAbi} from "../../utils/tokenLptokenStaking";
-import {nftAddress,nftAbi} from "../../utils/nft";
-import { ThreeDots  } from 'react-loader-spinner'
-import Web3 from 'web3';
-const web3EndPoint = new Web3("https://data-seed-prebsc-1-s3.binance.org:8545/")
+import { useDispatch, useSelector } from "react-redux";
+import { connectionAction } from "../../Redux/connection/actions";
+import { bbrTokenAddress, bbrtokenAbi } from "../../utils/bbr";
+import {
+  tokenLpStaking,
+  tokenLpStakingAbi,
+} from "../../utils/tokenLptokenStaking";
+import { nftAddress, nftAbi } from "../../utils/nft";
+import { ThreeDots } from "react-loader-spinner";
+import Web3 from "web3";
+const web3EndPoint = new Web3(
+  "https://data-seed-prebsc-1-s3.binance.org:8545/"
+);
 function LuckyDraw() {
   const dispatch = useDispatch();
-	let acc = useSelector((state) => state.connect?.connection);
+  let acc = useSelector((state) => state.connect?.connection);
   const [show, setShow] = useState(false);
-  const [value,setValue]=useState(1)
-  let [ibbrValue,setIbbrValue]=useState("0")
-  let [totalCost,setTotalCost]=useState()
-  let [mintArray,setMintArray]=useState([])
-  let [loader,setLoader]=useState(false)
+  const [value, setValue] = useState(1);
+  let [ibbrValue, setIbbrValue] = useState("0");
+  let [totalCost, setTotalCost] = useState("");
+  let [mintArray, setMintArray] = useState([]);
+  let [loader, setLoader] = useState(false);
 
-  const connectWallet = () =>{
-		dispatch(connectionAction())
-	}
+  const connectWallet = () => {
+    dispatch(connectionAction());
+  };
 
-  const mintingPrice=async()=>{
-    let tokenContract = new web3EndPoint.eth.Contract(nftAbi,nftAddress);
-    let value=await tokenContract.methods.MinitngPrice().call();
-    let newValue=web3EndPoint.utils.fromWei(value)
-    console.log("newValue",newValue)
-    setTotalCost(newValue)
-    
-  }
+  const mintingPrice = async () => {
+    let tokenContract = new web3EndPoint.eth.Contract(nftAbi, nftAddress);
+    let value = await tokenContract.methods.MinitngPrice().call();
+    let newValue = parseFloat(web3EndPoint.utils.fromWei(value));
+    console.log("newValue", newValue);
+    setTotalCost(newValue);
+  };
 
   const getCurrentNfts = async () => {
     try {
@@ -60,50 +64,47 @@ function LuckyDraw() {
         toast.info("Not Connected");
       } else {
         const web3 = window.web3;
-        const nftContract = new web3.eth.Contract(
-          nftAbi,
-          nftAddress
-        );
+        const nftContract = new web3.eth.Contract(nftAbi, nftAddress);
         let totalIds = await nftContract.methods.walletOfOwner(acc).call();
         totalIds = totalIds.slice(-value);
-        console.log("current items",totalIds)
+        console.log("current items", totalIds);
         let simplleArray = [];
         totalIds.forEach(async (ids) => {
           if (ids <= 35000) {
             let imageUrl = common;
             let imageName = `Common #${ids}`;
             let tokenId = ids;
-            simplleArray = [...simplleArray, { imageUrl, imageName ,tokenId}];
+            simplleArray = [...simplleArray, { imageUrl, imageName, tokenId }];
             setMintArray(simplleArray);
           } else if (ids > 35001 && ids <= 57000) {
             let imageUrl = uncommon;
             let imageName = `Uncommon #${ids}`;
             let tokenId = ids;
-            simplleArray = [...simplleArray, { imageUrl, imageName,tokenId }];
+            simplleArray = [...simplleArray, { imageUrl, imageName, tokenId }];
             setMintArray(simplleArray);
           } else if (ids > 57001 && ids <= 76000) {
             let imageUrl = rare;
             let imageName = `Rare #${ids}`;
             let tokenId = ids;
-            simplleArray = [...simplleArray, { imageUrl, imageName,tokenId }];
+            simplleArray = [...simplleArray, { imageUrl, imageName, tokenId }];
             setMintArray(simplleArray);
           } else if (ids > 76001 && ids <= 90000) {
             let imageUrl = epic;
             let imageName = `Epic #${ids}`;
             let tokenId = ids;
-            simplleArray = [...simplleArray, { imageUrl, imageName,tokenId }];
+            simplleArray = [...simplleArray, { imageUrl, imageName, tokenId }];
             setMintArray(simplleArray);
           } else if (ids > 90001 && ids <= 98500) {
             let imageUrl = legendery;
             let imageName = `Legendary #${ids}`;
             let tokenId = ids;
-            simplleArray = [...simplleArray, { imageUrl, imageName,tokenId }];
+            simplleArray = [...simplleArray, { imageUrl, imageName, tokenId }];
             setMintArray(simplleArray);
           } else if (ids > 98501 && ids <= 100000) {
             let imageUrl = mythic;
             let imageName = `Mythic #${ids}`;
             let tokenId = ids;
-            simplleArray = [...simplleArray, { imageUrl, imageName,tokenId }];
+            simplleArray = [...simplleArray, { imageUrl, imageName, tokenId }];
             setMintArray(simplleArray);
           }
         });
@@ -114,77 +115,75 @@ function LuckyDraw() {
     }
   };
 
-  const handleMint =async() => {
-    try{
+  const handleMint = async () => {
+    try {
       if (acc == "No Wallet") {
         toast.info("Wallet not connected");
       } else if (acc == "Wrong Network") {
         toast.info("Wrong Network");
       } else if (acc == "Connect Wallet") {
         toast.info("Please connect wallet");
-      }
-      else{
-        if(totalCost>ibbrValue){
+      } else {
+        if (totalCost > ibbrValue) {
           toast.info("Your balance is not enough");
-        }
-        else{
-          setLoader(true)
+        } else {
+          setLoader(true);
           const web3 = window.web3;
-          let nftContract = new web3.eth.Contract(nftAbi,nftAddress);
+          let nftContract = new web3.eth.Contract(nftAbi, nftAddress);
           await nftContract.methods.mint(value).send({
-            from:acc
+            from: acc,
           });
-          toast.success("successfully mint")
-          setLoader(false)
+          toast.success("successfully mint");
+          setLoader(false);
           getCurrentNfts();
-          balances()
-          
+          balances();
+
           // setShow(true);
         }
       }
-    }
-    catch(e){
+    } catch (e) {
       console.log("e", e);
-      toast.error("Failed")
-      setLoader(false)
+      toast.error("Failed");
+      setLoader(false);
     }
   };
   let [animationState, setAnimationState] = useState(true);
   let [animationState1, setAnimationState1] = useState(false);
 
-  const Plus= async()=>{
-    let tokenContract = new web3EndPoint.eth.Contract(nftAbi,nftAddress);
-    let tokenValue=await tokenContract.methods.MinitngPrice().call();
-    let limitValue=await tokenContract.methods.MaxLimitPerTransaction().call();
-    let newValue=web3EndPoint.utils.fromWei(tokenValue)
-    if(value<limitValue){
-    setValue((value)=>value + 1)
-    setTotalCost(newValue * (value + 1))
+  const Plus = async () => {
+    let tokenContract = new web3EndPoint.eth.Contract(nftAbi, nftAddress);
+    let tokenValue = await tokenContract.methods.MinitngPrice().call();
+    let limitValue = await tokenContract.methods
+      .MaxLimitPerTransaction()
+      .call();
+    let newValue = web3EndPoint.utils.fromWei(tokenValue);
+    if (value < limitValue) {
+      setValue((value) => value + 1);
+      setTotalCost(newValue * (value + 1));
+    } else {
+      toast.error("limit increase");
     }
-    else{
-      toast.error("limit increase")
+  };
+
+  const Miuns = () => {
+    if (value > 1) {
+      setTotalCost((totalCost) => totalCost - 50000);
+      setValue((value) => value - 1);
     }
-  }
+  };
 
-  const Miuns=()=>{
-  if(value>1){
-    setTotalCost((totalCost)=>totalCost-50000)
-   setValue((value)=>value-1)
-  }
-}
+  const balances = async () => {
+    const web3 = window.web3;
+    let tokenStaking = new web3.eth.Contract(tokenLpStakingAbi, tokenLpStaking);
+    let value = await tokenStaking.methods._balances(acc).call();
+    let newValue = parseFloat(web3.utils.fromWei(value));
+    setIbbrValue(newValue);
+  };
 
- const balances=async()=>{
-  const web3 = window.web3;
-  let tokenStaking = new web3.eth.Contract(tokenLpStakingAbi, tokenLpStaking);
-  let value=await tokenStaking.methods._balances(acc).call();
-  let newValue=parseInt(Number((web3.utils.fromWei(value))))
-  setIbbrValue( newValue)
-}
-
-useEffect(()=>{
-  balances()
-  mintingPrice()
-},[acc])
+  useEffect(() => {
+    balances();
+    mintingPrice();
+  }, [acc]);
   useEffect(() => {
     let interval = setInterval(() => {
       setAnimationState((prevState) => !prevState);
@@ -244,13 +243,15 @@ useEffect(()=>{
                   <div className="col-md-12 col-xl-3 col-sm-12 button_responsive">
                     <div className="p-2 float-end">
                       <button className="button btn_bg" onClick={connectWallet}>
-                             {acc === "No Wallet"
-                ? "Connect"
-                : acc === "Connect Wallet"
-                ? "Connect"
-                : acc === "Wrong Network"
-                ? acc
-                : acc.substring(0, 3) + "..." + acc.substring(acc.length - 3)}
+                        {acc === "No Wallet"
+                          ? "Connect"
+                          : acc === "Connect Wallet"
+                          ? "Connect"
+                          : acc === "Wrong Network"
+                          ? acc
+                          : acc.substring(0, 3) +
+                            "..." +
+                            acc.substring(acc.length - 3)}
                       </button>
                     </div>
                     <div className="p-2 float-end">
@@ -378,7 +379,13 @@ useEffect(()=>{
                           </div>
                           <div className="align-self-center">
                             <span>
-                              <b>{ibbrValue}</b> iBBR Point
+                              <b>
+                                {ibbrValue.toLocaleString(undefined, {
+                                  minimumFractionDigits: 0,
+                                  maximumFractionDigits: 3,
+                                })}
+                              </b>
+                              iBBR Point
                             </span>
                           </div>
                         </div>
@@ -398,15 +405,21 @@ useEffect(()=>{
                     <div className="row mt-3 d-flex justify-content-center">
                       <div className=" col-sm-6 ">
                         <div className="row d-flex justify-content-around align-items-center">
-                          <div className=" col-sm-6 d-flex align-items-center  Minusbox-1 gap-2" onClick={Miuns}>
-                            <div className="text-center" >
+                          <div
+                            className=" col-sm-6 d-flex align-items-center  Minusbox-1 gap-2"
+                            onClick={Miuns}
+                          >
+                            <div className="text-center">
                               <i class="fa-solid fa-minus"></i>
                             </div>
                           </div>
                           <div className="col-4  d-flex align-items-center justify-content-center Textbox">
                             <div className="text-center inputText">{value}</div>
                           </div>
-                          <div className="col-3  d-flex align-items-center Plusbox-1" onClick={Plus}>
+                          <div
+                            className="col-3  d-flex align-items-center Plusbox-1"
+                            onClick={Plus}
+                          >
                             <div className="text-center">
                               <i class="fa-solid fa-plus"></i>
                             </div>
@@ -423,10 +436,15 @@ useEffect(()=>{
                               Total Cost
                             </div>
                             <div className="align-self-center total_text_1">
-                              <span>
-                                <b>{totalCost}</b>
-                              </span>{" "}
-                              iBBR
+                            <span>
+                                <b>
+                                {totalCost.toLocaleString(undefined, {
+                                  minimumFractionDigits: 0,
+                                  maximumFractionDigits: 0,
+                                })}
+                                <span style={{paddingLeft:"2px"}}>iBBR</span>
+                                </b>
+                              </span>
                             </div>
                           </div>
                         </div>
@@ -448,20 +466,20 @@ useEffect(()=>{
                               handleMint();
                             }}
                           >
-                            {
-                              loader?(
+                            {loader ? (
                               <ThreeDots
-                              height="20"
-                              width="40"
-                              radius="9"
-                              color="black"
-                              ariaLabel="three-dots-loading"
-                              wrapperStyle={{justifyContent:"center"}}
-                              wrapperClassName=""
-                              visible={true}
-                            />
-                              ):(<>Mint</>)
-                            }
+                                height="20"
+                                width="40"
+                                radius="9"
+                                color="black"
+                                ariaLabel="three-dots-loading"
+                                wrapperStyle={{ justifyContent: "center" }}
+                                wrapperClassName=""
+                                visible={true}
+                              />
+                            ) : (
+                              <>Mint</>
+                            )}
                           </button>
                         </div>
                         <div>

@@ -37,14 +37,16 @@ function Lp_Pool1({ ibbrFunc, totalBalance }) {
     const web3 = window.web3;
     let tokenStaking = new web3.eth.Contract(tokenLpStakingAbi, tokenLpStaking);
     let staked = await tokenStaking.methods.totalBBRStaked(acc).call();
-    setStaked(Number(web3.utils.fromWei(staked)));
+    setStaked(parseFloat(web3.utils.fromWei(staked)));
   };
 
   const ibr = async () => {
     const web3 = window.web3;
     let tokenStaking = new web3.eth.Contract(tokenLpStakingAbi, tokenLpStaking);
     let value = await tokenStaking.methods.rewCalculator(acc).call();
-    let newValue = Number(web3.utils.fromWei(value)).toFixed(3);
+    console.log("ibbr",value)
+    let newValue = parseFloat(web3.utils.fromWei(value));
+    console.log("ibbr",newValue)
     setIbr(newValue);
   };
 
@@ -52,7 +54,7 @@ function Lp_Pool1({ ibbrFunc, totalBalance }) {
     const web3 = window.web3;
     let tokenContract = new web3.eth.Contract(bbrtokenAbi, bbrTokenAddress);
     let balance = await tokenContract.methods.balanceOf(acc).call();
-    setBalance(Number(web3.utils.fromWei(balance)));
+    setBalance(parseFloat(web3.utils.fromWei(balance)));
   };
 
   const maxFun = async () => {
@@ -185,7 +187,7 @@ function Lp_Pool1({ ibbrFunc, totalBalance }) {
           let value = await tokenStaking.methods.redeem().send({
             from: acc,
           });
-          toast.success("successfully redeem");
+          toast.success("successfully redeem but BBR lock for 7 days");
           setRedeemLoader(false);
           ibbrFunc();
           totalBalance();
@@ -288,19 +290,31 @@ function Lp_Pool1({ ibbrFunc, totalBalance }) {
           <div className="row d-flex justify-content-center">
             <div className="col-11 d-flex justify-content-between">
               <div className="wallet_text">Wallet</div>
-              <div className="token_text">{balanc} BBR</div>
+              <div className="token_text">
+                {balanc.toLocaleString(undefined, {
+                  minimumFractionDigits: 0,
+                  maximumFractionDigits: 3,
+                })} BBR</div>
             </div>
           </div>
           <div className="row d-flex justify-content-center">
             <div className="col-11 d-flex justify-content-between">
               <div className="wallet_text">iBBR Point</div>
-              <div className="token_text">{ibrValue} BBR</div>
+              <div className="token_text"> 
+              {ibrValue.toLocaleString(undefined, {
+                  minimumFractionDigits: 0,
+                  maximumFractionDigits: 3,
+                })} iBBR</div>
             </div>
           </div>
           <div className="row d-flex justify-content-center">
             <div className="col-11 d-flex justify-content-between">
               <div className="wallet_text">Staked</div>
-              <div className="token_text">{stake} BBR</div>
+              <div className="token_text">
+                {stake.toLocaleString(undefined, {
+                  minimumFractionDigits: 0,
+                  maximumFractionDigits: 3,
+                })}  BBR</div>
             </div>
           </div>
           <div className="row d-flex justify-content-center">
