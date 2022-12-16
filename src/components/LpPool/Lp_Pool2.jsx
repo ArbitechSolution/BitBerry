@@ -311,7 +311,7 @@ function Lp_Pool2({ ibbrFunc }) {
               {ibrValue.toLocaleString(undefined, {
                   minimumFractionDigits: 0,
                   maximumFractionDigits: 3,
-                })} iBBRLP</div>
+                })} iBBR</div>
             </div>
           </div>
           <div className="row d-flex justify-content-center">
