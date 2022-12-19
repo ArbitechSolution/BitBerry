@@ -8,25 +8,11 @@ import legendery from "../../Assets/nfts/legendary.PNG";
 import mythic from "../../Assets/nfts/mythic.PNG";
 import { IoCaretBackSharp, IoCaretForwardSharp } from "react-icons/io5";
 import "./myNFT.css";
-import { Modal, ModalFooter } from "react-bootstrap";
+import { Modal} from "react-bootstrap";
 import NftTransfer from "../nftTransfer/nftTransfer";
-import {useDispatch, useSelector} from "react-redux";
-import {connectionAction} from "../../Redux/connection/actions"
+import {useSelector} from "react-redux";
 import {nftAddress,nftAbi} from "../../utils/nft";
 
-
-const array = [
-  { title: "Common", id: "#1001", pic: common },
-  { title: "Uncommon", id: "#1002", pic: uncommon },
-  { title: "Rare", id: "#1003", pic: rare },
-  { title: "Epic", id: "#1004", pic: epic },
-  { title: "Legendary", id: "#1005", pic: legendery },
-  { title: "My Thic", id: "#1006", pic: mythic },
-  { title: "Common", id: "#1001", pic: common },
-  { title: "Uncommon", id: "#1002", pic: uncommon },
-  { title: "Rare", id: "#1003", pic: rare },
-];
-const items = [...array];
 
 function Items({ currentItems,nftFetch }) {
   const [show, setShow] = useState(false);

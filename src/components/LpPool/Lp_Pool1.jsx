@@ -175,7 +175,7 @@ function Lp_Pool1({ ibbrFunc, totalBalance }) {
         toast.info("Please connect wallet");
       } else {
         if (Number(ibrValue) <= 0) {
-         toast.error("Wait for ibbr points")
+         toast.error("Wait for IBBR Points and BBR are locked for 7 days")
         } 
          else {
           setRedeemLoader(true);
