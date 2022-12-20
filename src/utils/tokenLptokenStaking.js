@@ -1,4 +1,4 @@
-export const tokenLpStaking = "0xe37974259C81aCcCC0d730b40cC8054d53c6d019";
+export const tokenLpStaking = "0x0A57aA574235749a13a0245ECAeABA6439f56BC4";
 export const tokenLpStakingAbi = [
   {
     inputs: [
