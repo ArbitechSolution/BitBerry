@@ -26,6 +26,8 @@ function Lp_Pool1({ ibbrFunc, totalBalance }) {
   let [loader, setLoader] = useState(false);
   let [unstakeLoader, setUnstkeLoader] = useState(false);
   let [redeemLoader, setRedeemLoader] = useState(false);
+  let [maxFlag, setMaxFlag] = useState(false);
+  let [maxValue, setMaxValue] = useState();
   let [redemValue, setRedemValue] = useState("0");
   let [ibbrValue, setIbbrValue] = useState();
 
@@ -38,15 +40,16 @@ function Lp_Pool1({ ibbrFunc, totalBalance }) {
     let tokenStaking = new web3.eth.Contract(tokenLpStakingAbi, tokenLpStaking);
     let staked = await tokenStaking.methods.totalBBRStaked(acc).call();
     setStaked(parseFloat(web3.utils.fromWei(staked)));
+    
   };
 
   const ibr = async () => {
     const web3 = window.web3;
     let tokenStaking = new web3.eth.Contract(tokenLpStakingAbi, tokenLpStaking);
     let value = await tokenStaking.methods.rewCalculator(acc).call();
-    console.log("ibbr",value)
+    console.log("ibbr", value);
     let newValue = parseFloat(web3.utils.fromWei(value));
-    console.log("ibbr",newValue)
+    console.log("ibbr", newValue);
     setIbr(newValue);
   };
 
@@ -54,6 +57,8 @@ function Lp_Pool1({ ibbrFunc, totalBalance }) {
     const web3 = window.web3;
     let tokenContract = new web3.eth.Contract(bbrtokenAbi, bbrTokenAddress);
     let balance = await tokenContract.methods.balanceOf(acc).call();
+    console.log("balance ",balance )
+    setMaxValue(balance)
     setBalance(parseFloat(web3.utils.fromWei(balance)));
   };
 
@@ -70,7 +75,10 @@ function Lp_Pool1({ ibbrFunc, totalBalance }) {
         let tokenContract = new web3.eth.Contract(bbrtokenAbi, bbrTokenAddress);
         let balance = await tokenContract.methods.balanceOf(acc).call();
         let newVal = Number(web3.utils.fromWei(balance));
-        setApproveValue(newVal);
+        console.log("newVal", newVal);
+        setMaxFlag(true);
+        setApproveValue(newVal)
+        
       }
     } catch (e) {
       console.log("e", e);
@@ -93,16 +101,15 @@ function Lp_Pool1({ ibbrFunc, totalBalance }) {
         );
         if (stake == 0 && ibrValue == 0) {
           toast.error("Stake First ");
-        }
-        else if(stake == 0){
+        } else if (stake == 0) {
           toast.error("Stake First ");
-        }
-         else {
+        } else {
           setUnstkeLoader(true);
           await tokenStaking.methods.withdrawtoken().send({
             from: acc,
-          });
-          toast.success("successfully unstake");
+          }); 
+          
+          toast.success("Transection Confirmed");
           setUnstkeLoader(false);
           ibbrFunc();
           totalBalance();
@@ -142,18 +149,36 @@ function Lp_Pool1({ ibbrFunc, totalBalance }) {
             .send({
               from: acc,
             });
-          await tokenStaking.methods
-            .Stake(web3.utils.toWei(approveValue.toString()))
-            .send({
-              from: acc,
-            });
-
-          toast.success("successfully stacked");
-          totalBalance();
-          staked();
-          ibr();
-          balance();
-          setLoader(false);
+          
+          if (maxFlag==true) {
+            console.log("maxValue",maxValue)
+            let balance = await tokenContract.methods.balanceOf(acc).call();
+            await tokenStaking.methods
+              .Stake(balance)
+              .send({
+                from: acc,
+              });
+            toast.success("successfully stacked");
+            totalBalance();
+            staked();
+            ibr();
+            balance();
+            setLoader(false);
+          } 
+          else {
+            console.log("maxValue1",web3.utils.toWei(approveValue.toString()))
+            await tokenStaking.methods
+              .Stake(web3.utils.toWei(approveValue.toString()))
+              .send({
+                from: acc,
+              });
+            toast.success("successfully stacked");
+            totalBalance();
+            staked();
+            ibr();
+            balance();
+            setLoader(false);
+          }
         } else {
           toast.error("value less than 500");
         }
@@ -175,9 +200,8 @@ function Lp_Pool1({ ibbrFunc, totalBalance }) {
         toast.info("Please connect wallet");
       } else {
         if (Number(ibrValue) <= 0) {
-         toast.error("Wait for IBBR Points and BBR are locked for 7 days")
-        } 
-         else {
+          toast.error("Wait for IBBR Points and BBR are locked for 7 days");
+        } else {
           setRedeemLoader(true);
           const web3 = window.web3;
           let tokenStaking = new web3.eth.Contract(
@@ -191,7 +215,6 @@ function Lp_Pool1({ ibbrFunc, totalBalance }) {
           setRedeemLoader(false);
           ibbrFunc();
           totalBalance();
-          
         }
       }
     } catch (e) {
@@ -294,17 +317,21 @@ function Lp_Pool1({ ibbrFunc, totalBalance }) {
                 {balanc.toLocaleString(undefined, {
                   minimumFractionDigits: 0,
                   maximumFractionDigits: 3,
-                })} BBR</div>
+                })}{" "}
+                BBR
+              </div>
             </div>
           </div>
           <div className="row d-flex justify-content-center">
             <div className="col-11 d-flex justify-content-between">
               <div className="wallet_text">iBBR Point</div>
-              <div className="token_text"> 
-              {ibrValue.toLocaleString(undefined, {
+              <div className="token_text">
+                {ibrValue.toLocaleString(undefined, {
                   minimumFractionDigits: 0,
                   maximumFractionDigits: 3,
-                })} iBBR</div>
+                })}{" "}
+                iBBR
+              </div>
             </div>
           </div>
           <div className="row d-flex justify-content-center">
@@ -314,7 +341,9 @@ function Lp_Pool1({ ibbrFunc, totalBalance }) {
                 {stake.toLocaleString(undefined, {
                   minimumFractionDigits: 0,
                   maximumFractionDigits: 3,
-                })}  BBR</div>
+                })}{" "}
+                BBR
+              </div>
             </div>
           </div>
           <div className="row d-flex justify-content-center">
@@ -377,7 +406,7 @@ function Lp_Pool1({ ibbrFunc, totalBalance }) {
             )}
           </button>
           <button className=" button_redeem" onClick={redem}>
-          {redeemLoader ? (
+            {redeemLoader ? (
               <ThreeDots
                 height="20"
                 width="40"

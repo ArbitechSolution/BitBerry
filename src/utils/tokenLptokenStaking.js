@@ -1,4 +1,4 @@
-export const tokenLpStaking = "0x0A57aA574235749a13a0245ECAeABA6439f56BC4";
+export const tokenLpStaking = "0xB182542DcCbA82e368f306cfC944752b2A58af63";
 export const tokenLpStakingAbi = [
   {
     inputs: [
@@ -287,26 +287,6 @@ export const tokenLpStakingAbi = [
           { internalType: "bool", name: "isWithdrawl", type: "bool" },
         ],
         internalType: "struct BitBerry_Stake.users[]",
-        name: "",
-        type: "tuple[]",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [{ internalType: "address", name: "_user", type: "address" }],
-    name: "getLPInfo",
-    outputs: [
-      {
-        components: [
-          { internalType: "uint256", name: "LP_Amount", type: "uint256" },
-          { internalType: "uint256", name: "Deposit_time", type: "uint256" },
-          { internalType: "uint256", name: "withdrawnToken", type: "uint256" },
-          { internalType: "uint256", name: "unFreezeTime", type: "uint256" },
-          { internalType: "bool", name: "isWithdrawl", type: "bool" },
-        ],
-        internalType: "struct BitBerry_Stake.usersLP[]",
         name: "",
         type: "tuple[]",
       },
