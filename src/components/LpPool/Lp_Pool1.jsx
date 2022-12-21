@@ -214,6 +214,7 @@ function Lp_Pool1({ ibbrFunc, totalBalance }) {
           toast.success("successfully redeem but BBR lock for 7 days");
           setRedeemLoader(false);
           ibbrFunc();
+          ibr();
           totalBalance();
         }
       }

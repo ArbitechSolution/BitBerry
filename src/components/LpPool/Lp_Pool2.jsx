@@ -111,7 +111,7 @@ function Lp_Pool2({ ibbrFunc }) {
           await tokenStaking.methods.withdrawLPtoken().send({
             from: acc,
           });
-          toast.success("successfully unstake");
+          toast.success("Transection Confirmed");
           setUnstkeLoader(false);
           ibbrFunc();
           staked();
@@ -193,11 +193,12 @@ function Lp_Pool2({ ibbrFunc }) {
           let value = await tokenStaking.methods.redeemforLp().send({
             from: acc,
           });
-          let newValue = Number(web3.utils.fromWei(value)).toFixed(2);
-          console.log(newValue);
+          // let newValue = Number(web3.utils.fromWei(value)).toFixed(2);
+          // console.log(newValue);
           toast.success("successfully redeem but LP lock for 10 days");
           setRedeemLoader(false);
           ibbrFunc();
+          ibr();
         }
       }
     } catch (e) {
